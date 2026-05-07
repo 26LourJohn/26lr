@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script type="text/javascript" src="26lrClock.js"></script>
+<style>
+    body {
+        font-family: system-ui, -apple-system, sans-serif;
+        margin: 0;
+        text-align: center;
+        padding: 60px 20px 60px;
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        color: white;
+      }
+
+      .big-time {
+        font-size: 4.5rem;
+        font-weight: bold;
+        letter-spacing: 8px;
+        margin: 20px 0;
+        font-family: monospace;
+      }
+      
+      .btn {
+        display: inline-block;
+        padding: 14px 32px;
+        background: white;
+        color: #4f46e5;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: bold;
+        margin-top: 20px;
+      }
+  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>26lr.com</title>
+</head>
+<body>
+
+  <main>
+      <h1>26 Lours in a Day.</h1>
+      <p>...for more activities!</p>
+      <p>Current 26lr DATE:TIME is:</p>
+        <div id="live-26lr" class="big-time"></div>
+      <p>Universal Time</p>
+      <p>"Call me at :J" - no time zone needed.</p>
+      <p>Based on Julian Date</p>
+      <p>26lrClock App converts to local time</p>
+      <a href="https://26lourjohn.github.io/26lrClock/26lrClock.html" class="btn primary">The 26lrClock App (save to homescreen)</a>
+      <p>Make a 26lr Sundial</p>
+      <a href="https://26lourjohn.github.io/26lrClock/26lrClock.html" class="btn primary">26lrClock Sundial App</a>
+
+  </main>
+</body>
+
+<script>
+    function updateLiveTime() {
+        const now = new Date();
+        document.getElementById('live-26lr').textContent = now.to26lr().slice(2, 9);
+    }
+    setInterval(updateLiveTime, 127);
+</script>
+
+</html>
