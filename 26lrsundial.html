@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>26lrSundial - Chalk Version</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; background: #f4f4f4; text-align: center; }
+        .controls { background: white; padding: 15px; margin: 15px auto; max-width: 900px; border-radius: 10px; box-shadow: 0 2px 15px rgba(0,0,0,0.1); }
+        label { font-weight: bold; margin: 0 8px; }
+        input[type=range] { width: 280px; }
+        button, input[type=checkbox] { margin: 5px; }
+        .canvas-container { margin: 10px auto; background: white; padding: 15px; box-shadow: 0 6px 25px rgba(0,0,0,0.2); display: inline-block; }
+        canvas { border: none; background: #fff; cursor: crosshair; touch-action: none; }
+        #anglePopup { position: fixed; background: white; border: 2px solid #333; border-radius: 8px; padding: 12px 20px; box-shadow: 0 6px 25px rgba(0,0,0,0.4); display: none; z-index: 100; font-size: 16px; pointer-events: none; }
+
+        @media print {
+            .controls, #anglePopup, button { display: none !important; }
+            .canvas-container { box-shadow: none; padding: 0; margin: 0; }
+            canvas { max-width: 100%; height: auto; }
+            /* Hide dynamic Now and Compass lines on print */
+            .now-line, .compass-line { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="canvas-container">
+        <canvas id="sundialCanvas" width="1250" height="1250"></canvas>
+    </div>
+
+    <div class="controls">
+        <label>Latitude: <span id="latVal">42.4°</span></label>
+        <input type="range" id="latitude" min="-70" max="70" value="42.4" step="0.1">
+
+        <label>Longitude: <span id="lonVal">-71.1°</span></label>
+        <input type="range" id="longitude" min="-180" max="180" value="-71.1" step="0.1">
+
+        <label>Date: <span id="dateVal">Jun 7</span></label>
+        <input type="range" id="dateSlider" min="0" max="365" value="158">
+
+        <label><input type="checkbox" id="dstCheck" checked> Daylight Saving Time</label>
+
+        <button onclick="generateSundial()">Redraw</button>
+        <button onclick="getMyLocation()">📍 Get My Location</button>
+        <button onclick="window.print()">🖨️ Print Large</button>
+        <button id="compassBtn">🧭 Enable Compass</button>
+    </div>
+
+    <div id="anglePopup"></div>
+
+    <script>
+        const canvas = document.getElementById('sundialCanvas');
+        const ctx = canvas.getContext('2d');
+        let currentLat = 42.4, currentLon = -71.1, currentDay = 158;
+        let isDST = true;
+        let compassHeading = null;
+        let labelData = [];
+
+        function toRadians(deg) { return deg * Math.PI / 180; }
+
+        function getDeclination(doy) { return -23.44 * Math.cos(toRadians(360 * (doy + 10) / 365)); }
+        function getEoT(doy) {
+            const B = toRadians(360 * (doy - 81) / 365);
+            return 9.87 * Math.sin(2 * B) - 7.53 * Math.cos(B) - 1.5 * Math.sin(B);
+        }
+
+        function getSolarAzimuth(haDeg, lat, dec) {
+            const phi = toRadians(lat);
+            const delta = toRadians(dec);
+            const H = toRadians(haDeg);
+            const sinAlpha = Math.sin(delta) * Math.sin(phi) + Math.cos(delta) * Math.cos(phi) * Math.cos(H);
+            const alpha = Math.asin(Math.max(-1, Math.min(1, sinAlpha)));
+            let az = Math.acos((Math.sin(delta) - Math.sin(alpha) * Math.sin(phi)) / (Math.cos(alpha) * Math.cos(phi))) * 180 / Math.PI;
+            if (Math.sin(H) > 0) az = 360 - az;
+            return az;
+        }
+
+        function updateLabels() {
+            document.getElementById('latVal').textContent = currentLat.toFixed(1) + '°';
+            document.getElementById('lonVal').textContent = currentLon.toFixed(1) + '°';
+            const d = new Date(2025, 0, currentDay + 1);
+            document.getElementById('dateVal').textContent = d.toLocaleDateString('en-US', {month:'short', day:'numeric'});
+        }
+
+        function generateSundial() {
+            currentLat = parseFloat(document.getElementById('latitude').value);
+            currentLon = parseFloat(document.getElementById('longitude').value);
+            currentDay = parseInt(document.getElementById('dateSlider').value);
+            isDST = document.getElementById('dstCheck').checked;
+            updateLabels();
+            labelData = [];
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+            const dec = getDeclination(currentDay);
+            const eotDeg = getEoT(currentDay) / 4;
+            const maxR = 595;
+
+            function drawRay(solarAzDeg, label, ring) {
+                const canvasRad = toRadians(solarAzDeg + 90);
+
+                const startR = ring === 'real' ? 0 : ring === 'std' ? 168 : 228;
+                const labelR = ring === 'real' ? 155 : ring === 'std' ? 188 : 258;
+
+                ctx.strokeStyle = ring === 'real' ? '#555' : ring === 'std' ? '#222' : '#000';
+                ctx.lineWidth = ring === '26lr' ? 3.6 : 3.0;
+                ctx.beginPath();
+                ctx.moveTo(cx + startR * Math.cos(canvasRad), cy + startR * Math.sin(canvasRad));
+                ctx.lineTo(cx + maxR * Math.cos(canvasRad), cy + maxR * Math.sin(canvasRad));
+                ctx.stroke();
+
+                const lx = cx + labelR * Math.cos(canvasRad);
+                const ly = cy + labelR * Math.sin(canvasRad);
+
+                ctx.fillStyle = '#fff';
+                ctx.beginPath(); ctx.arc(lx, ly, 19, 0, Math.PI*2); ctx.fill();
+                ctx.strokeStyle = '#222'; ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.arc(lx, ly, 19, 0, Math.PI*2); ctx.stroke();
+
+                ctx.fillStyle = '#000';
+                ctx.font = ring === '26lr' ? 'bold 21px Arial' : 'bold 18px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(label, lx, ly + 7);
+
+                labelData.push({x: lx, y: ly, radius: 23, text: label, azimuth: solarAzDeg.toFixed(1)});
+            }
+
+            // Real Solar Time
+            for (let h = 0; h < 24; h++) {
+                const ha = (h - 12) * 15;
+                const az = getSolarAzimuth(ha, currentLat, dec);
+                drawRay(az, (h % 12 || 12).toString(), 'real');
+            }
+
+            // Standard Time
+            const tz = isDST ? -4 : -5;
+            for (let h = 0; h < 24; h++) {
+                const ha = (h - 12 - tz) * 15 + currentLon + eotDeg;
+                const az = getSolarAzimuth(ha, currentLat, dec);
+                drawRay(az, (h % 12 || 12).toString(), 'std');
+            }
+
+            // 26lr
+            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const utc12HA = currentLon + eotDeg;
+            for (let i = 0; i < 26; i++) {
+                const ha = utc12HA + i * (360 / 26);
+                const az = getSolarAzimuth(ha, currentLat, dec);
+                drawRay(az, letters[i], '26lr');
+            }
+
+            // Sunrise / Sunset
+            const latRad = toRadians(currentLat), decRad = toRadians(dec);
+            let cosH = -Math.tan(latRad) * Math.tan(decRad); cosH = Math.max(-1, Math.min(1, cosH));
+            const halfDay = Math.acos(cosH) * 180 / Math.PI / 15;
+            const srHA = -halfDay * 15;
+            const ssHA = halfDay * 15;
+            const srAz = getSolarAzimuth(srHA, currentLat, dec);
+            const ssAz = getSolarAzimuth(ssHA, currentLat, dec);
+
+            ctx.lineWidth = 6;
+            ctx.strokeStyle = '#ffcc00';
+            let r = toRadians(srAz + 90); ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + maxR * Math.cos(r), cy + maxR * Math.sin(r)); ctx.stroke();
+            ctx.strokeStyle = '#ff8800';
+            r = toRadians(ssAz + 90); ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + maxR * Math.cos(r), cy + maxR * Math.sin(r)); ctx.stroke();
+
+            // Red Now line
+            const now = new Date();
+            const utcH = now.getUTCHours() + now.getUTCMinutes()/60;
+            const nowHA = (utcH - 12) * 15 + currentLon + eotDeg;
+            const nowAz = getSolarAzimuth(nowHA, currentLat, dec);
+            ctx.strokeStyle = '#e63939';
+            ctx.lineWidth = 6;
+            const nr = toRadians(nowAz + 90);
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(cx + maxR * Math.cos(nr), cy + maxR * Math.sin(nr));
+            ctx.stroke();
+
+            // Central Gnomon
+            ctx.fillStyle = '#cc0000';
+            ctx.beginPath(); ctx.arc(cx, cy, 26, 0, Math.PI*2); ctx.fill();
+            ctx.strokeStyle = '#fff'; ctx.lineWidth = 5;
+            ctx.beginPath(); ctx.arc(cx, cy, 26, 0, Math.PI*2); ctx.stroke();
+
+            // Default North-South Compass Needle (red North, silver South)
+            ctx.strokeStyle = '#e63939'; // Red North
+            ctx.lineWidth = 5;
+            ctx.beginPath();
+            ctx.moveTo(cx, cy - 95);
+            ctx.lineTo(cx, cy + 5);
+            ctx.stroke();
+
+            ctx.strokeStyle = '#aaaaaa'; // Silver South
+            ctx.beginPath();
+            ctx.moveTo(cx, cy + 5);
+            ctx.lineTo(cx, cy + 95);
+            ctx.stroke();
+
+            // Live Compass (if enabled)
+            if (compassHeading !== null) {
+                const ch = toRadians(compassHeading + 90);
+                ctx.strokeStyle = '#0066ff';
+                ctx.lineWidth = 5;
+                ctx.setLineDash([12, 8]);
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.lineTo(cx + maxR * 1.18 * Math.cos(ch), cy + maxR * 1.18 * Math.sin(ch));
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+        }
+
+        // Tap handling (center + labels)
+        function handleTap(clientX, clientY) {
+            const rect = canvas.getBoundingClientRect();
+            const mx = clientX - rect.left;
+            const my = clientY - rect.top;
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+
+            if (Math.hypot(mx - cx, my - cy) < 50) {
+                const now = new Date();
+                const utcH = now.getUTCHours() + now.getUTCMinutes()/60;
+                const nowHA = (utcH - 12) * 15 + currentLon + (getEoT(currentDay)/4);
+                const nowAz = getSolarAzimuth(nowHA, currentLat, getDeclination(currentDay));
+
+                const popup = document.getElementById('anglePopup');
+                popup.innerHTML = `<strong>NOW</strong><br>${now.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'})}<br>Azimuth: <strong>${nowAz.toFixed(1)}°</strong>`;
+                popup.style.left = (clientX + 20) + 'px';
+                popup.style.top = (clientY - 40) + 'px';
+                popup.style.display = 'block';
+                setTimeout(() => popup.style.display = 'none', 4000);
+                return;
+            }
+
+            for (let l of labelData) {
+                if (Math.hypot(mx - l.x, my - l.y) < l.radius) {
+                    const popup = document.getElementById('anglePopup');
+                    popup.innerHTML = `<strong>${l.text}</strong><br>Azimuth: <strong>${l.azimuth}°</strong>`;
+                    popup.style.left = (clientX + 20) + 'px';
+                    popup.style.top = (clientY - 30) + 'px';
+                    popup.style.display = 'block';
+                    setTimeout(() => popup.style.display = 'none', 3000);
+                    return;
+                }
+            }
+        }
+
+        canvas.addEventListener('click', e => handleTap(e.clientX, e.clientY));
+        canvas.addEventListener('touchstart', e => {
+            e.preventDefault();
+            const t = e.touches[0];
+            handleTap(t.clientX, t.clientY);
+        });
+
+        document.getElementById('compassBtn').addEventListener('click', () => {
+            if (typeof DeviceOrientationEvent?.requestPermission === 'function') {
+                DeviceOrientationEvent.requestPermission().then(() => {
+                    window.addEventListener('deviceorientation', e => {
+                        compassHeading = e.webkitCompassHeading !== undefined ? e.webkitCompassHeading : 360 - (e.alpha || 0);
+                        generateSundial();
+                    });
+                });
+            }
+        });
+
+        function getMyLocation() {
+            if (!navigator.geolocation) return alert("Geolocation not supported");
+            navigator.geolocation.getCurrentPosition(pos => {
+                currentLat = parseFloat(pos.coords.latitude.toFixed(2));
+                currentLon = parseFloat(pos.coords.longitude.toFixed(2));
+                document.getElementById('latitude').value = currentLat;
+                document.getElementById('longitude').value = currentLon;
+                generateSundial();
+            });
+        }
+
+        document.getElementById('latitude').addEventListener('input', generateSundial);
+        document.getElementById('longitude').addEventListener('input', generateSundial);
+        document.getElementById('dateSlider').addEventListener('input', generateSundial);
+        document.getElementById('dstCheck').addEventListener('change', generateSundial);
+
+        window.onload = () => {
+            const today = new Date();
+            currentDay = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 86400000);
+            document.getElementById('dateSlider').value = currentDay;
+            generateSundial();
+        };
+    </script>
+</body>
+</html>
