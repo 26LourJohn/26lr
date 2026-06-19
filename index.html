@@ -37,26 +37,41 @@
 <body>
 
   <main>
-      <h2>26 Lours. 0 Time Zones.</h2>
-      <p>Current 26lr Date:Time is</p>
+      <h2>26 Lours in a Day.</h2>
+      <p>Current 26lr Date:Time is </p>
       <div id="live-26lr" class="big-time"></div>
-      <p>:A is 12PM UTC 7AM EST</p>
-      <p>A: is Monday, B: Tuesday, G: Sunday</p>
+      <p>:A is 12PM UTC (<span id="localA"></span>) </p>
+      <p>A: Monday to G: Sunday</p>
       <p>26 Weeks is a Lear</p>
       <p>26 Lears is a Lecade (~13 Years)</p>
       <p>26lrClock converts 26lr to sundial time or timezone</p>
       <a href="https://26lourjohn.github.io/26lrClock/26lrClock.html" class="btn primary">The 26lr Clock App (add to homescreen)</a>
       <p>Make a 26lr Sundial</p>
-      <a href="26lrSundial.html" class="btn primary">26lr Sundial</a>
+      <a href="https://26lourjohn.github.io/26lrSundial/26lrSundial.html" class="btn primary">26lr Sundial</a>
   </main>
 </body>
 
 <script>
-    function updateLiveTime() {
-        const now = new Date();
-        document.getElementById('live-26lr').textContent = now.to26lr().slice(0, 10);
-    }
-    setInterval(updateLiveTime, 86400/(26*26*26*26));
+
+
+const todayA = new Date().from26Lr('A');
+const localTimeStr = todayA.toLocaleTimeString('en-US', {
+  hour: 'numeric', minute: '2-digit', hour12: true 
+});
+const zoneStr = new Intl.DateTimeFormat('en-US', { 
+  timeZoneName: 'short' 
+}).formatToParts(todayA).find(part => part.type === 'timeZoneName').value;
+document.getElementById('localA').textContent = `${localTimeStr} ${zoneStr}`;
+
+function updateLiveTime() {
+    const now26 = new Date().to26lr();
+    document.getElementById('live-26lr').textContent = now26.slice(0, 10);
+}
+setInterval(updateLiveTime, 86400000/(26*26*26*26));
+
+
+
+
 </script>
 
 </html>
