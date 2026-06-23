@@ -2,6 +2,7 @@
 // Now using 7 Day A-G Weeks TZYOC
 // by John Howard JZYTH 
 Date.prototype.from26Lr = function (s) {
+	s=s.toUpperCase();
 	if (s.indexOf(":")==-1) s = ":"+s;	
 	s = s.split(":");
 	lrdate=s[0];
@@ -185,6 +186,18 @@ Date.prototype.equationoftime = function(){
 	
 }
 
+Date.prototype.realTime = function(longitude) {
+	let realSolarMinutes =
+	 		 this.getUTCHours() * 60 + this.getUTCMinutes() + (this.getUTCSeconds() / 60)
+			 + (longitude * 4) + this.equationoftime();
+	realSolarMinutes = ((realSolarMinutes % 1440) + 1440) % 1440;
+	const realHours = Math.floor(realSolarMinutes / 60) % 12;
+	const realMins = Math.floor(realSolarMinutes % 60);
+	const realSecs = Math.floor((realSolarMinutes % 1) * 60);
+	const pad = (n) => n < 10 ? '0' + n : n;
+	return `${realHours}:${pad(realMins)}:${pad(realSecs)}`+ (realSolarMinutes < 720 ? " AM" : " PM");
+}
+
 Date.prototype.dateDifference = function (d){
 	var diff = d.getTime() - this.getTime();
 	var future = diff < 0;
@@ -217,3 +230,4 @@ Date.prototype.dateDifference = function (d){
 	 }
 	return h.valueOf() * -60;
   }
+
