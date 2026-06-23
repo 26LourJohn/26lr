@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>26lr.com • World Cup 2026 Matches</title>
+    <script src="26lrClock.js"></script>
+    <style>
+        body { font-family: monospace; background: #0a0a0a; color: #00ff88; margin: 20px; }
+        table { width: 100%; border-collapse: collapse; background: #111; }
+        th, td { padding: 12px; border: 1px solid #00aa44; text-align: left; }
+        th { background: #003300; }
+        .utc { color: #88ff88; }
+        .lr { color: #ffff00; font-weight: bold; }
+        tr:hover { background: #002200; }
+        .played { opacity: 0.7; }
+    </style>
+</head>
+<body>
+    <h1>2026 FIFA World Cup Match Times</h1>
+    <table id="wcTable">
+        <thead>
+            <tr>
+                <th>26lr Time</th>
+                <th id="timezonehdr">Local Time Zone</th>
+                <th>Match</th>
+                <th>City</th>
+                <th>Real Sun Time</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        const matches = [
+            {date:"2026-06-22", utcTime:"17:00", match:"Argentina vs Austria", city:"Dallas", lat:32.8, lon:-96.8},
+            {date:"2026-06-22", utcTime:"20:00", match:"France vs Iraq", city:"Philadelphia", lat:39.9, lon:-75.2},
+            {date:"2026-06-23", utcTime:"00:00", match:"Norway vs Senegal", city:"New York / New Jersey", lat:40.7, lon:-74.0},
+            {date:"2026-06-23", utcTime:"03:00", match:"Jordan vs Algeria", city:"San Francisco Bay Area", lat:37.8, lon:-122.3},
+            {date:"2026-06-23", utcTime:"17:00", match:"Portugal vs Uzbekistan", city:"Houston", lat:29.8, lon:-95.4},
+            {date:"2026-06-23", utcTime:"20:00", match:"England vs Ghana", city:"Boston", lat:42.4, lon:-71.1},
+            {date:"2026-06-23", utcTime:"23:00", match:"Panama vs Croatia", city:"Toronto", lat:43.7, lon:-79.4},
+            {date:"2026-06-24", utcTime:"02:00", match:"Colombia vs Congo DR", city:"Guadalajara", lat:20.7, lon:-103.4},
+            {date:"2026-06-24", utcTime:"19:00", match:"Switzerland vs Canada", city:"Vancouver", lat:49.3, lon:-123.1},
+            {date:"2026-06-24", utcTime:"19:00", match:"Bosnia and Herzegovina vs Qatar", city:"Seattle", lat:47.6, lon:-122.3},
+            {date:"2026-06-24", utcTime:"22:00", match:"Scotland vs Brazil", city:"Miami", lat:25.8, lon:-80.2},
+            {date:"2026-06-24", utcTime:"22:00", match:"Morocco vs Haiti", city:"Atlanta", lat:33.7, lon:-84.4},
+            {date:"2026-06-25", utcTime:"01:00", match:"Czechia vs Mexico", city:"Mexico City", lat:19.4, lon:-99.1},
+            {date:"2026-06-25", utcTime:"01:00", match:"South Africa vs South Korea", city:"Monterrey", lat:25.7, lon:-100.3},
+            {date:"2026-06-25", utcTime:"20:00", match:"Curaçao vs Côte d'Ivoire", city:"Philadelphia", lat:39.9, lon:-75.2},
+            {date:"2026-06-25", utcTime:"20:00", match:"Ecuador vs Germany", city:"New York / New Jersey", lat:40.7, lon:-74.0},
+            {date:"2026-06-25", utcTime:"23:00", match:"Japan vs Sweden", city:"Dallas", lat:32.8, lon:-96.8},
+            {date:"2026-06-25", utcTime:"23:00", match:"Tunisia vs Netherlands", city:"Kansas City", lat:39.1, lon:-94.6},
+            {date:"2026-06-26", utcTime:"02:00", match:"Türkiye vs USA", city:"Los Angeles", lat:34.1, lon:-118.2},
+            {date:"2026-06-26", utcTime:"02:00", match:"Paraguay vs Australia", city:"San Francisco Bay Area", lat:37.8, lon:-122.3},
+            {date:"2026-06-26", utcTime:"19:00", match:"Norway vs France", city:"Boston", lat:42.4, lon:-71.1},
+            {date:"2026-06-26", utcTime:"19:00", match:"Senegal vs Iraq", city:"Toronto", lat:43.7, lon:-79.4},
+            {date:"2026-06-27", utcTime:"00:00", match:"Cabo Verde vs Saudi Arabia", city:"Houston", lat:29.8, lon:-95.4},
+            {date:"2026-06-27", utcTime:"00:00", match:"Uruguay vs Spain", city:"Guadalajara", lat:20.7, lon:-103.4},
+            {date:"2026-06-27", utcTime:"03:00", match:"Egypt vs Iran", city:"Seattle", lat:47.6, lon:-122.3},
+            {date:"2026-06-27", utcTime:"03:00", match:"New Zealand vs Belgium", city:"Vancouver", lat:49.3, lon:-123.1},
+            {date:"2026-06-27", utcTime:"21:00", match:"Croatia vs Ghana", city:"Philadelphia", lat:39.9, lon:-75.2},
+            {date:"2026-06-27", utcTime:"21:00", match:"Panama vs England", city:"New York / New Jersey", lat:40.7, lon:-74.0},
+            {date:"2026-06-27", utcTime:"23:30", match:"Colombia vs Portugal", city:"Miami", lat:25.8, lon:-80.2},
+            {date:"2026-06-27", utcTime:"23:30", match:"Congo DR vs Uzbekistan", city:"Atlanta", lat:33.7, lon:-84.4},
+            {date:"2026-06-28", utcTime:"02:00", match:"Algeria vs Austria", city:"Kansas City", lat:39.1, lon:-94.6},
+            {date:"2026-06-28", utcTime:"02:00", match:"Jordan vs Argentina", city:"Dallas", lat:32.8, lon:-96.8}
+        ];
+
+        function pad(n) { return n < 10 ? '0' + n : n; }
+
+        function renderTable() {
+            const localFormatter = new Intl.DateTimeFormat(undefined, { dateStyle: 'short', timeStyle: 'short' });
+
+            const tzAbbreviation = new Intl.DateTimeFormat(undefined, {timeZoneName: 'long'})
+                    .formatToParts(new Date())
+                    .find(part => part.type === 'timeZoneName')
+                    .value;
+
+            document.getElementById('timezonehdr').innerHTML = tzAbbreviation;
+            
+            const tbody = document.querySelector('#wcTable tbody');
+            tbody.innerHTML = '';
+            
+            matches.forEach(m => {
+                const row = document.createElement('tr');
+                const matchDate = new Date(`${m.date}T${m.utcTime}:00Z`);
+                const formattedDate = localFormatter.format(matchDate);
+                let lrTime = "js file missing";
+                let eot = "js file missing";
+                let realTime = "js missing";
+                try {
+                    if (typeof matchDate.to26lr === 'function') {
+                        lrTime = matchDate.to26lr().slice(2,9);
+                        realTime = matchDate.realTime(m.lon);
+                    }
+                } catch(e) {}
+                
+                row.innerHTML = `
+                    <td class="lr">${lrTime}</td>
+                    <td class="utc">${formattedDate}</td>
+                    <td><strong>${m.match}</strong></td>
+                    <td>${m.city}</td>
+                    <td>${realTime}</td>`;
+                tbody.appendChild(row);
+            });
+        }
+        window.onload = renderTable;
+    </script>
+</body>
+</html>
