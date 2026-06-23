@@ -12,17 +12,20 @@
         color: white;
       }
 
-      .big-time {
-        font-size: 2.5rem;
+      .time {
         font-weight: bold;
-        letter-spacing: 6px;
-        margin: 20px 0;
         font-family: monospace;
       }
-      
+      .big {
+        font-size: 2.5rem;
+        margin: 20px 0;
+        }
+      .small {
+        font-size: 1rem;
+      }
       .btn {
         display: inline-block;
-        padding: 14px 32px;
+        padding: 10px 24px;
         background: white;
         color: #4f46e5;
         text-decoration: none;
@@ -37,41 +40,53 @@
 <body>
 
   <main>
-      <h2>26 Lours in a Day.</h2>
-      <p>Current 26lr Date:Time is </p>
-      <div id="live-26lr" class="big-time"></div>
-      <p>:A is 12PM UTC (<span id="localA"></span>) </p>
-      <p>A: Monday to G: Sunday</p>
-      <p>26 Weeks is a Lear</p>
-      <p>26 Lears is a Lecade (~13 Years)</p>
-      <p>26lrClock converts 26lr to sundial time or timezone</p>
-      <a href="https://26lourjohn.github.io/26lrClock/26lrClock.html" class="btn primary">The 26lr Clock App (add to homescreen)</a>
-      <p>Make a 26lr Sundial</p>
-      <a href="https://26lourjohn.github.io/26lrSundial/26lrSundial.html" class="btn primary">26lr Sundial</a>
+    <a href="worldcup-26lr.html" class="btn">26lr World Cup Schedule</a>
+      <h2>26 Lours. 0 Time Zones</h2>
+      <p class="time"><span id="lentury" class="small"></span>
+      <span id="live-26lr" class="big"></span>
+      <span id="licro" class="small time"></span></p>
+      <p>Lour :A is 12 PM UTC (<span id="localA"></span>) </p>
+      <p>A: is Monday, B: Tuesday, G: Sunday.</p>
+      <p>Based on Julian Date (<span id="JulianDate"></span>) </p>
+      <p>Convert <input type="input" onchange="convert(this.value)"> = <span id="output"></span></p>
+      <p>26lrClock shows timezone or sundial time</p>
+      <a href="https://26lourjohn.github.io/26lrClock/26lrClock.html" class="btn">26lr Clock App</a>
+      <a href="https://26lourjohn.github.io/26lrSundial/26lrSundial.html" class="btn">26lr Sundial</a>
   </main>
 </body>
 
 <script>
 
-
 const todayA = new Date().from26Lr('A');
-const localTimeStr = todayA.toLocaleTimeString('en-US', {
+const localTimeStr = todayA.toLocaleTimeString(undefined, {
   hour: 'numeric', minute: '2-digit', hour12: true 
 });
-const zoneStr = new Intl.DateTimeFormat('en-US', { 
+const zoneStr = new Intl.DateTimeFormat(undefined, { 
   timeZoneName: 'short' 
 }).formatToParts(todayA).find(part => part.type === 'timeZoneName').value;
 document.getElementById('localA').textContent = `${localTimeStr} ${zoneStr}`;
 
 function updateLiveTime() {
-    const now26 = new Date().to26lr();
-    document.getElementById('live-26lr').textContent = now26.slice(0, 10);
+  const now = new Date();
+  const now26 = now.to26lr();
+  const jd = now.toJulian().toFixed(5); 
+  document.getElementById('lentury').textContent = now26.slice(0, 2);
+  document.getElementById('live-26lr').textContent = now26.slice(2, 9);
+  document.getElementById('licro').textContent = now26.slice(9, 10);
+  document.getElementById('JulianDate').textContent = jd;
 }
+function convert(i){
+  var o;
+  var d = new Date(i);
+  if (!isNaN(d.getTime())){
+    o = d.to26lr();
+  } else {
+    const localFormatter = new Intl.DateTimeFormat(undefined, { dateStyle: 'short', timeStyle: 'short' });
+    o = localFormatter.format(new Date().from26Lr(i));
+  }
+  document.getElementById('output').textContent = o;
+}
+
 setInterval(updateLiveTime, 86400000/(26*26*26*26));
-
-
-
-
 </script>
-
 </html>
