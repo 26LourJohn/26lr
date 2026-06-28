@@ -33,39 +33,263 @@
 
     <script>
         const matches = [
-            {date:"2026-06-22", utcTime:"17:00", match:"Argentina vs Austria", city:"Dallas", lat:32.8, lon:-96.8},
-            {date:"2026-06-22", utcTime:"20:00", match:"France vs Iraq", city:"Philadelphia", lat:39.9, lon:-75.2},
-            {date:"2026-06-23", utcTime:"00:00", match:"Norway vs Senegal", city:"New York / New Jersey", lat:40.7, lon:-74.0},
-            {date:"2026-06-23", utcTime:"03:00", match:"Jordan vs Algeria", city:"San Francisco Bay Area", lat:37.8, lon:-122.3},
-            {date:"2026-06-23", utcTime:"17:00", match:"Portugal vs Uzbekistan", city:"Houston", lat:29.8, lon:-95.4},
-            {date:"2026-06-23", utcTime:"20:00", match:"England vs Ghana", city:"Boston", lat:42.4, lon:-71.1},
-            {date:"2026-06-23", utcTime:"23:00", match:"Panama vs Croatia", city:"Toronto", lat:43.7, lon:-79.4},
-            {date:"2026-06-24", utcTime:"02:00", match:"Colombia vs Congo DR", city:"Guadalajara", lat:20.7, lon:-103.4},
-            {date:"2026-06-24", utcTime:"19:00", match:"Switzerland vs Canada", city:"Vancouver", lat:49.3, lon:-123.1},
-            {date:"2026-06-24", utcTime:"19:00", match:"Bosnia and Herzegovina vs Qatar", city:"Seattle", lat:47.6, lon:-122.3},
-            {date:"2026-06-24", utcTime:"22:00", match:"Scotland vs Brazil", city:"Miami", lat:25.8, lon:-80.2},
-            {date:"2026-06-24", utcTime:"22:00", match:"Morocco vs Haiti", city:"Atlanta", lat:33.7, lon:-84.4},
-            {date:"2026-06-25", utcTime:"01:00", match:"Czechia vs Mexico", city:"Mexico City", lat:19.4, lon:-99.1},
-            {date:"2026-06-25", utcTime:"01:00", match:"South Africa vs South Korea", city:"Monterrey", lat:25.7, lon:-100.3},
-            {date:"2026-06-25", utcTime:"20:00", match:"Curaçao vs Côte d'Ivoire", city:"Philadelphia", lat:39.9, lon:-75.2},
-            {date:"2026-06-25", utcTime:"20:00", match:"Ecuador vs Germany", city:"New York / New Jersey", lat:40.7, lon:-74.0},
-            {date:"2026-06-25", utcTime:"23:00", match:"Japan vs Sweden", city:"Dallas", lat:32.8, lon:-96.8},
-            {date:"2026-06-25", utcTime:"23:00", match:"Tunisia vs Netherlands", city:"Kansas City", lat:39.1, lon:-94.6},
-            {date:"2026-06-26", utcTime:"02:00", match:"Türkiye vs USA", city:"Los Angeles", lat:34.1, lon:-118.2},
-            {date:"2026-06-26", utcTime:"02:00", match:"Paraguay vs Australia", city:"San Francisco Bay Area", lat:37.8, lon:-122.3},
-            {date:"2026-06-26", utcTime:"19:00", match:"Norway vs France", city:"Boston", lat:42.4, lon:-71.1},
-            {date:"2026-06-26", utcTime:"19:00", match:"Senegal vs Iraq", city:"Toronto", lat:43.7, lon:-79.4},
-            {date:"2026-06-27", utcTime:"00:00", match:"Cabo Verde vs Saudi Arabia", city:"Houston", lat:29.8, lon:-95.4},
-            {date:"2026-06-27", utcTime:"00:00", match:"Uruguay vs Spain", city:"Guadalajara", lat:20.7, lon:-103.4},
-            {date:"2026-06-27", utcTime:"03:00", match:"Egypt vs Iran", city:"Seattle", lat:47.6, lon:-122.3},
-            {date:"2026-06-27", utcTime:"03:00", match:"New Zealand vs Belgium", city:"Vancouver", lat:49.3, lon:-123.1},
-            {date:"2026-06-27", utcTime:"21:00", match:"Croatia vs Ghana", city:"Philadelphia", lat:39.9, lon:-75.2},
-            {date:"2026-06-27", utcTime:"21:00", match:"Panama vs England", city:"New York / New Jersey", lat:40.7, lon:-74.0},
-            {date:"2026-06-27", utcTime:"23:30", match:"Colombia vs Portugal", city:"Miami", lat:25.8, lon:-80.2},
-            {date:"2026-06-27", utcTime:"23:30", match:"Congo DR vs Uzbekistan", city:"Atlanta", lat:33.7, lon:-84.4},
-            {date:"2026-06-28", utcTime:"02:00", match:"Algeria vs Austria", city:"Kansas City", lat:39.1, lon:-94.6},
-            {date:"2026-06-28", utcTime:"02:00", match:"Jordan vs Argentina", city:"Dallas", lat:32.8, lon:-96.8}
-        ];
+  {
+    date: "2026-06-28",
+    utcTime: "19:00",
+    match: "South Africa vs Canada",
+    city: "Los Angeles",
+    lat: 33.953,
+    lon: -118.339
+  },
+  {
+    date: "2026-06-29",
+    utcTime: "17:00",
+    match: "Brazil vs Japan",
+    city: "Houston",
+    lat: 29.685,
+    lon: -95.408
+  },
+  {
+    date: "2026-06-29",
+    utcTime: "20:30",
+    match: "Germany vs Paraguay",
+    city: "Boston",
+    lat: 42.091,
+    lon: -71.264
+  },
+  {
+    date: "2026-06-30",
+    utcTime: "01:00",
+    match: "Netherlands vs Morocco",
+    city: "Monterrey",
+    lat: 25.669,
+    lon: -100.244
+  },
+  {
+    date: "2026-06-30",
+    utcTime: "17:00",
+    match: "Ivory Coast vs Norway",
+    city: "Dallas",
+    lat: 32.747,
+    lon: -96.094
+  },
+  {
+    date: "2026-06-30",
+    utcTime: "21:00",
+    match: "France vs Sweden",
+    city: "New York/New Jersey",
+    lat: 40.813,
+    lon: -74.074
+  },
+  {
+    date: "2026-07-01",
+    utcTime: "01:00",
+    match: "Mexico vs Ecuador",
+    city: "Mexico City",
+    lat: 19.303,
+    lon: -99.151
+  },
+  {
+    date: "2026-07-01",
+    utcTime: "16:00",
+    match: "England vs DR Congo",
+    city: "Atlanta",
+    lat: 33.755,
+    lon: -84.401
+  },
+  {
+    date: "2026-07-01",
+    utcTime: "20:00",
+    match: "Belgium vs Senegal",
+    city: "Seattle",
+    lat: 47.595,
+    lon: -122.332
+  },
+  {
+    date: "2026-07-02",
+    utcTime: "00:00",
+    match: "United States vs Bosnia and Herzegovina",
+    city: "San Francisco Bay Area",
+    lat: 37.403,
+    lon: -121.970
+  },
+  {
+    date: "2026-07-02",
+    utcTime: "19:00",
+    match: "Spain vs Austria",
+    city: "Los Angeles",
+    lat: 33.953,
+    lon: -118.339
+  },
+  {
+    date: "2026-07-02",
+    utcTime: "23:00",
+    match: "Portugal vs Croatia",
+    city: "Toronto",
+    lat: 43.633,
+    lon: -79.419
+  },
+  {
+    date: "2026-07-03",
+    utcTime: "03:00",
+    match: "Switzerland vs Algeria",
+    city: "Vancouver",
+    lat: 49.276,
+    lon: -123.112
+  },
+  {
+    date: "2026-07-03",
+    utcTime: "18:00",
+    match: "Australia vs Egypt",
+    city: "Dallas",
+    lat: 32.747,
+    lon: -96.094
+  },
+  {
+    date: "2026-07-03",
+    utcTime: "22:00",
+    match: "Argentina vs Cape Verde",
+    city: "Miami",
+    lat: 25.958,
+    lon: -80.239
+  },
+  {
+    date: "2026-07-04",
+    utcTime: "01:30",
+    match: "Colombia vs Ghana",
+    city: "Kansas City",
+    lat: 39.048,
+    lon: -94.484
+  },
+  {
+    date: "2026-07-04",
+    utcTime: "17:00",
+    match: "1 v 3",
+    city: "Houston",
+    lat: 29.685,
+    lon: -95.408
+  },
+  {
+    date: "2026-07-04",
+    utcTime: "21:00",
+    match: "2 v 5",
+    city: "Philadelphia",
+    lat: 39.9,
+    lon: -75.2
+  },
+  {
+    date: "2026-07-05",
+    utcTime: "20:00",
+    match: "4 v 6",
+    city: "New York/New Jersey",
+    lat: 40.813,
+    lon: -74.074
+  },
+  {
+    date: "2026-07-06",
+    utcTime: "00:00",
+    match: "7 v 8",
+    city: "Mexico City",
+    lat: 19.303,
+    lon: -99.151
+  },
+  {
+    date: "2026-07-06",
+    utcTime: "19:00",
+    match: "11 v 12",
+    city: "Arlington, TX",
+    lat: 32.7,
+    lon: -97
+  },
+  {
+    date: "2026-07-07",
+    utcTime: "00:00",
+    match: "9 v 10",
+    city: "Seattle",
+    lat: 47.595,
+    lon: -122.332
+  },
+  {
+    date: "2026-07-07",
+    utcTime: "16:00",
+    match: "14 v 16",
+    city: "Atlanta",
+    lat: 33.755,
+    lon: -84.401
+  },
+  {
+    date: "2026-07-07",
+    utcTime: "20:00",
+    match: "13 v 15",
+    city: "Vancouver",
+    lat: 49.276,
+    lon: -123.112
+  },
+  {
+    date: "2026-07-09",
+    utcTime: "20:00",
+    match: "1 v 2",
+    city: "Boston",
+    lat: 42.091,
+    lon: -71.264
+  },
+  {
+    date: "2026-07-10",
+    utcTime: "19:00",
+    match: "5 v 6",
+    city: "Los Angeles",
+    lat: 33.953,
+    lon: -118.339
+  },
+  {
+    date: "2026-07-11",
+    utcTime: "21:00",
+    match: "3 v 4",
+    city: "Miami",
+    lat: 25.958,
+    lon: -80.239
+  },
+  {
+    date: "2026-07-12",
+    utcTime: "01:00",
+    match: "7 v 8",
+    city: "Kansas City",
+    lat: 39.048,
+    lon: -94.484
+  },
+  {
+    date: "2026-07-14",
+    utcTime: "19:00",
+    match: "1 v 2",
+    city: "Arlington, TX",
+    lat: 32.7,
+    lon: -97
+  },
+  {
+    date: "2026-07-15",
+    utcTime: "19:00",
+    match: "3 v 4",
+    city: "Atlanta",
+    lat: 33.755,
+    lon: -84.401
+  },
+  {
+    date: "2026-07-18",
+    utcTime: "21:00",
+    match: "1 v 2 Loser",
+    city: "Miami",
+    lat: 25.958,
+    lon: -80.239
+  },
+  {
+    date: "2026-07-19",
+    utcTime: "19:00",
+    match: "1 v 2 Winner",
+    city: "New York/New Jersey",
+    lat: 40.813,
+    lon: -74.074
+  }
+];
 
         function pad(n) { return n < 10 ? '0' + n : n; }
 
@@ -78,7 +302,7 @@
                     .value;
 
             document.getElementById('timezonehdr').innerHTML = tzAbbreviation;
-            
+
             const tbody = document.querySelector('#wcTable tbody');
             tbody.innerHTML = '';
             
@@ -97,7 +321,7 @@
                 } catch(e) {}
                 
                 row.innerHTML = `
-                    <td class="lr">${lrTime}</td>
+                    <td class="lr"><a href="https://26lourjohn.github.io/26lrClock/26lrClock.html?t=${lrTime}" style="color: inherit;">${lrTime}</a></td>
                     <td class="utc">${formattedDate}</td>
                     <td><strong>${m.match}</strong></td>
                     <td>${m.city}</td>

@@ -44,9 +44,10 @@
       <h2>26 Lours. 0 Time Zones</h2>
       <p class="time"><span id="lentury" class="small"></span>
       <span id="live-26lr" class="big"></span>
-      <span id="licro" class="small time"></span></p>
-      <p>Lour :A is 12 PM UTC (<span id="localA"></span>) </p>
-      <p>A: is Monday, B: Tuesday, G: Sunday.</p>
+      <span id="licro" class="small"></span></p>
+      <p>UA is Lentury and Lecade. <span id="date26lr" class="time"></span> is Lear (26 Weeks), Week and Day. </p>
+      <p>Day digit goes A: to G:</p>
+      <p>Day changes at 12 PM UTC (<span id="localA"></span>) </p>
       <p>Based on Julian Date (<span id="JulianDate"></span>) </p>
       <p>Convert <input type="input" onchange="convert(this.value)"> = <span id="output"></span></p>
       <p>26lrClock shows timezone or sundial time</p>
@@ -73,6 +74,7 @@ function updateLiveTime() {
   document.getElementById('lentury').textContent = now26.slice(0, 2);
   document.getElementById('live-26lr').textContent = now26.slice(2, 9);
   document.getElementById('licro').textContent = now26.slice(9, 10);
+  document.getElementById('date26lr').textContent = now26.slice(2, 6);
   document.getElementById('JulianDate').textContent = jd;
 }
 function convert(i){
@@ -81,7 +83,7 @@ function convert(i){
   if (!isNaN(d.getTime())){
     o = d.to26lr();
   } else {
-    const localFormatter = new Intl.DateTimeFormat(undefined, { dateStyle: 'short', timeStyle: 'short' });
+    const localFormatter = new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'medium' });
     o = localFormatter.format(new Date().from26Lr(i));
   }
   document.getElementById('output').textContent = o;
