@@ -7,12 +7,13 @@
         font-family: system-ui, -apple-system, sans-serif;
         margin: 0;
         text-align: center;
-        padding: 60px 20px 60px;
+        padding: 40px 10px 40px;
         background:rgb(107, 31, 31);
         color: white;
       }
 
       .time {
+       
         font-weight: bold;
         font-family: monospace;
       }
@@ -41,16 +42,17 @@
 
   <main>
     <a href="worldcup-26lr.html" class="btn">26lr World Cup Schedule</a>
-      <h2>26 Lours. 0 Time Zones</h2>
+      <h2>26lr is Date:Time in 26 Letters</h2>
       <p class="time"><span id="lentury" class="small"></span>
       <span id="live-26lr" class="big"></span>
       <span id="licro" class="small"></span></p>
-      <p><span id="lour" class="time"></span> is the current Lour. <span id="linute" class="time"></span> is Linute, Lecond and Licro. </p>
-  
-      <p><span class="time">UA</span> is Lentury and Lecade. <span id="date26lr" class="time"></span> is Lear (26 Weeks), Week and Day. </p>
+      <p><span class="time">UA</span> is Lentury Lecade (~13 Years).</p>
+      <p><span id="date26lr" class="time"></span> is Lear (26 Weeks), Week and Day. </p>
+      <p><span id="lour" class="time"></span> is the Lour (~55 Minutes).</p>
+      <p><span id="linute" class="time"></span> is Linute, Lecond and Licro. </p>
       <p>Day digit goes A: to G: (Monday - Sunday)</p>
       <p>Day changes at 12 PM UTC (<span id="localA"></span>) </p>
-      <p>Based on Julian Date (<span id="JulianDate" class="small"></span>) </p>
+      <p>Based on Julian Date (<span id="JulianDate" class="time"></span>) </p>
       <p>Convert <input type="input" onchange="convert(this.value)"> = <span id="output"></span></p>
       <p>26lrClock shows timezone or sundial time</p>
       <a href="https://26lourjohn.github.io/26lrClock/26lrClock.html" class="btn">26lr Clock App</a>
@@ -79,7 +81,7 @@ function updateLiveTime() {
   document.getElementById('live-26lr').textContent = now26.slice(2, 9);
   document.getElementById('licro').textContent = now26.slice(9, 10);
   document.getElementById('date26lr').textContent = now26.slice(2, 6);
-  document.getElementById('JulianDate').textContent = jd.toFixed(5);
+  document.getElementById('JulianDate').textContent = jd.toFixed(6);
 }
 function convert(i){
   var o;
