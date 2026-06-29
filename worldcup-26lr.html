@@ -321,10 +321,10 @@
                 } catch(e) {}
                 
                 row.innerHTML = `
-                    <td class="lr"><a href="https://26lourjohn.github.io/26lrClock/26lrClock.html?t=${lrTime}" style="color: inherit;">${lrTime}</a></td>
+                    <td class="lr"><a href="https://26lourjohn.github.io/26lrClock/26lrClock.html?t=${lrTime}&c=${m.city}" style="color: inherit;">${lrTime}</a></td>
                     <td class="utc">${formattedDate}</td>
                     <td><strong>${m.match}</strong></td>
-                    <td>${m.city}</td>
+                    <td><a href="https://26lourjohn.github.io/26lrClock/26lrClock.html?c=${m.city}" style="color: inherit;">${m.city}</a></td>
                     <td>${realTime}</td>`;
                 tbody.appendChild(row);
             });
