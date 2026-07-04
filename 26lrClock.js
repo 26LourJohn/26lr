@@ -23,9 +23,14 @@ Date.prototype.from26Lr = function (s) {
 	days += weeks * 7; //14
 
 	//compute time
-	var ms = 7.0; // add an extra licrosecond as hack fix for mysterious bug
-	for (i=0;i<lrtime.length;i++) ms += (lrtime.charCodeAt(i)-65) / Math.pow(26,i+1) * 86400000;
-
+	const halfhours = ["AAA","AOC","BCE","BQG","CEI","CSK","DGN","DUP","EIR","EWT","FKV","FYX","GNA","HBC","HPE","IDG","IRI","JFK","JTN","KHP","KVR","LJT","LXV","MLX","NAA","NOC","OCE","OQG","PEI","PSK","QGN","QUP","RIR","RWT","SKV","SYX","TNA","UBC","UPE","VDG","VRI","WFK","WTN","XHP","XVR","YJT","YXV","ZLX"]
+	const halfhour = halfhours.indexOf(lrtime);
+	if (halfhour==-1){
+		var ms = 7.0; // add an extra licrosecond as hack fix for mysterious bug
+		for (i=0;i<lrtime.length;i++) ms += (lrtime.charCodeAt(i)-65) / Math.pow(26,i+1) * 86400000;
+	}else{
+		ms = halfhour*1800000;
+	}
 	var d = new Date();
 	d.setTime((days-2440587.5) * 86400000 + ms); 
 	return d;

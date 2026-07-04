@@ -32,7 +32,7 @@
         </thead>
         <tbody id="match-table-body"></tbody>
     </table>
-
+<div id="debug"></div>
 <script>
 const matches = [
   {
@@ -368,6 +368,18 @@ matches.forEach((m) => {
   tablebody.appendChild(row);
   
 });
+
+const dt = new Date();
+const year = dt.getUTCFullYear();
+const month = dt.getUTCMonth();
+const day = dt.getUTCDate();
+for (var h=0;h<24;h++){
+  for (var m=0;m<2;m++){
+    const utcTimestamp = Date.UTC(year, month, day, h, m*30, 0, 0);
+    let d = new Date(utcTimestamp);
+    document.getElementById('debug').innerHTML += '"'+d.to26lr().slice(6,9) + '",';
+  }
+}
 
 if (rowToScrollTo) {
     rowToScrollTo.scrollIntoView({behavior: "smooth",block: "center"});
