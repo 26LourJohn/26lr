@@ -13,12 +13,14 @@
         .utc { color: #88ff88; }
         .lr { color: #ffff00; font-weight: bold; }
         tr:hover { background: #002200; }
-        .played { opacity: 0.7; }
+        .match-row.past {background-color: #411;opacity: 0.9;}
+        .match-row.current {background-color: #a0c;border-left: 4px solid #1890ff;font-weight: bold;}
+        .match-row.future {background-color: #522}
     </style>
 </head>
 <body>
     <h1>2026 FIFA World Cup Match Times</h1>
-    <table id="wcTable">
+    <table>
         <thead>
             <tr>
                 <th>26lr Time</th>
@@ -28,11 +30,11 @@
                 <th>Real Sun Time</th>
             </tr>
         </thead>
-        <tbody></tbody>
+        <tbody id="match-table-body"></tbody>
     </table>
 
-    <script>
-        const matches = [
+<script>
+const matches = [
   {
     date: "2026-06-28",
     utcTime: "19:00",
@@ -164,7 +166,7 @@
   {
     date: "2026-07-04",
     utcTime: "17:00",
-    match: "1 v 3",
+    match: "Canada v Morroco",
     city: "Houston",
     lat: 29.685,
     lon: -95.408
@@ -172,7 +174,7 @@
   {
     date: "2026-07-04",
     utcTime: "21:00",
-    match: "2 v 5",
+    match: "Paraguay v France",
     city: "Philadelphia",
     lat: 39.9,
     lon: -75.2
@@ -180,7 +182,7 @@
   {
     date: "2026-07-05",
     utcTime: "20:00",
-    match: "4 v 6",
+    match: "Brazil v Norway",
     city: "New York/New Jersey",
     lat: 40.813,
     lon: -74.074
@@ -188,7 +190,7 @@
   {
     date: "2026-07-06",
     utcTime: "00:00",
-    match: "7 v 8",
+    match: "Mexico v England",
     city: "Mexico City",
     lat: 19.303,
     lon: -99.151
@@ -196,7 +198,7 @@
   {
     date: "2026-07-06",
     utcTime: "19:00",
-    match: "11 v 12",
+    match: "Portugal v Spain",
     city: "Arlington, TX",
     lat: 32.7,
     lon: -97
@@ -204,7 +206,7 @@
   {
     date: "2026-07-07",
     utcTime: "00:00",
-    match: "9 v 10",
+    match: "United States v Belgium",
     city: "Seattle",
     lat: 47.595,
     lon: -122.332
@@ -212,7 +214,7 @@
   {
     date: "2026-07-07",
     utcTime: "16:00",
-    match: "14 v 16",
+    match: "Argentina v Egypt",
     city: "Atlanta",
     lat: 33.755,
     lon: -84.401
@@ -220,7 +222,7 @@
   {
     date: "2026-07-07",
     utcTime: "20:00",
-    match: "13 v 15",
+    match: "Switzerland v Columbia",
     city: "Vancouver",
     lat: 49.276,
     lon: -123.112
@@ -290,46 +292,86 @@
     lon: -74.074
   }
 ];
+const tablebody = document.getElementById("match-table-body");
+const localFormatter = new Intl.DateTimeFormat(undefined, { dateStyle: 'short', timeStyle: 'short' });
+const tzAbbreviation = new Intl.DateTimeFormat(undefined, {timeZoneName: 'long'})
+        .formatToParts(new Date())
+        .find(part => part.type === 'timeZoneName')
+        .value;
+document.getElementById('timezonehdr').innerHTML = tzAbbreviation;
 
-        function pad(n) { return n < 10 ? '0' + n : n; }
+const now = new Date().getTime(); 
+const TWO_HOURS_MS = 2 * 60 * 60 * 1000;
+let rowToScrollTo = null;
 
-        function renderTable() {
-            const localFormatter = new Intl.DateTimeFormat(undefined, { dateStyle: 'short', timeStyle: 'short' });
+matches.forEach((m) => {
+  const matchDate = new Date(`${m.date}T${m.utcTime}:00Z`);
+  let lrTime = "js file missing";
+  let eot = "js file missing";
+  let realTime = "js missing";
+  try {
+    if (typeof matchDate.to26lr === 'function') {
+        lrTime = matchDate.to26lr().slice(2,9);
+        realTime = matchDate.realTime(m.lon);
+      }
+  } catch(e) {}
 
-            const tzAbbreviation = new Intl.DateTimeFormat(undefined, {timeZoneName: 'long'})
-                    .formatToParts(new Date())
-                    .find(part => part.type === 'timeZoneName')
-                    .value;
+  const matchTime = matchDate.getTime();
+  const matchEndTime = matchTime + TWO_HOURS_MS;
+  
+  const row = document.createElement('tr');
+  row.classList.add('match-row');
+  if (now > matchEndTime) {
+    row.classList.add('past');
+  } else if (now >= matchTime && now <= matchEndTime) {
+      row.classList.add('current');
+      if (!rowToScrollTo) {
+        rowToScrollTo = row; 
+      }
+  } else {
+    row.classList.add('future');
+    if (!rowToScrollTo) {
+      rowToScrollTo = row;
+    }
+  }
 
-            document.getElementById('timezonehdr').innerHTML = tzAbbreviation;
+  let td = document.createElement('td');
+  let link = document.createElement('a');
+    link.textContent = lrTime;
+    link.href = `https://26lourjohn.github.io/26lrClock/26lrClock.html?t=${lrTime}&c=${m.city}`;
+    link.classList.add('lr');
+    link.target = 'blank';
+    td.appendChild(link);
+    row.appendChild(td);
 
-            const tbody = document.querySelector('#wcTable tbody');
-            tbody.innerHTML = '';
-            
-            matches.forEach(m => {
-                const row = document.createElement('tr');
-                const matchDate = new Date(`${m.date}T${m.utcTime}:00Z`);
-                const formattedDate = localFormatter.format(matchDate);
-                let lrTime = "js file missing";
-                let eot = "js file missing";
-                let realTime = "js missing";
-                try {
-                    if (typeof matchDate.to26lr === 'function') {
-                        lrTime = matchDate.to26lr().slice(2,9);
-                        realTime = matchDate.realTime(m.lon);
-                    }
-                } catch(e) {}
-                
-                row.innerHTML = `
-                    <td class="lr"><a href="https://26lourjohn.github.io/26lrClock/26lrClock.html?t=${lrTime}&c=${m.city}" style="color: inherit;">${lrTime}</a></td>
-                    <td class="utc">${formattedDate}</td>
-                    <td><strong>${m.match}</strong></td>
-                    <td><a href="https://26lourjohn.github.io/26lrClock/26lrClock.html?c=${m.city}" style="color: inherit;">${m.city}</a></td>
-                    <td>${realTime}</td>`;
-                tbody.appendChild(row);
-            });
-        }
-        window.onload = renderTable;
-    </script>
+  td = document.createElement('td');
+    td.textContent = localFormatter.format(matchDate);
+    row.appendChild(td);
+
+  td = document.createElement('td');
+    td.textContent = m.match;
+    row.appendChild(td);
+
+  td = document.createElement('td');
+    link = document.createElement('a');
+    link.textContent = m.city;
+    link.href = `https://26lourjohn.github.io/26lrClock/26lrClock.html?c=${m.city}`;
+    link.classList.add('lr');
+    link.target = 'blank';
+    td.appendChild(link);
+    row.appendChild(td);
+
+  td = document.createElement('td');
+    td.textContent = realTime;
+    row.appendChild(td);
+  
+  tablebody.appendChild(row);
+  
+});
+
+if (rowToScrollTo) {
+    rowToScrollTo.scrollIntoView({behavior: "smooth",block: "center"});
+}
+</script>
 </body>
 </html>
