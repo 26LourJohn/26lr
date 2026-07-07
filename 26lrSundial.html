@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>26lrSundial</title>
+    
     <style>
         body { font-family: Arial, sans-serif; margin: 0; background: #f4f4f4; text-align: center; }
         .controls { background: white; padding: 12px; margin: 10px auto; max-width: 900px; border-radius: 10px; box-shadow: 0 2px 15px rgba(0,0,0,0.1); }
@@ -41,7 +42,7 @@
 
         <button onclick="generateSundial()">Redraw</button>
         <button onclick="getMyLocation()">📍 My Location</button>
-        <button onclick="window.print()">🖨️ Print (Centered)</button>
+        <button onclick="generateSundial(true);window.print()">🖨️ Print</button>
         <button id="compassBtn">🧭 Compass</button>
     </div>
 
@@ -81,7 +82,7 @@
             document.getElementById('dateVal').textContent = d.toLocaleDateString('en-US', {month:'short', day:'numeric'});
         }
 
-        function generateSundial() {
+        function generateSundial(forprint) {
             currentLat = parseFloat(document.getElementById('latitude').value);
             currentLon = parseFloat(document.getElementById('longitude').value);
             currentDay = parseInt(document.getElementById('dateSlider').value);
@@ -102,11 +103,11 @@
             function drawRay(solarAzDeg, label, ring) {
                 const canvasRad = toRadians(solarAzDeg + 90);
 
-                const startR = ring === 'real' ? 0 : ring === 'std' ? 172 : 235;
-                const labelR = ring === 'real' ? 162 : ring === 'std' ? 195 : 265;
+                const startR = ring === 'real' ? 170 : ring === 'std' ? 240 : 295;
+                const labelR = ring === 'real' ? 170 : ring === 'std' ? 230 : 295;
 
                 ctx.strokeStyle = ring === 'real' ? '#555' : ring === 'std' ? '#222' : '#000';
-                ctx.lineWidth = ring === '26lr' ? 3.6 : 3.0;
+                ctx.lineWidth = ring === '26lr' ? 2.0 : 3.0;
                 ctx.beginPath();
                 ctx.moveTo(cx + startR * Math.cos(canvasRad), cy + startR * Math.sin(canvasRad));
                 ctx.lineTo(cx + maxR * Math.cos(canvasRad), cy + maxR * Math.sin(canvasRad));
@@ -131,7 +132,7 @@
             // Real Solar
             for (let h = 0; h < 24; h++) {
                 const ha = (h - 12) * 15;
-                const az = getSolarAzimuth(ha, currentLat, dec);
+                const az = h?getSolarAzimuth(ha, currentLat, dec):180;
                 drawRay(az, (h % 12 || 12).toString(), 'real');
             }
 
@@ -168,17 +169,20 @@
             r = toRadians(ssAz + 90); ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + maxR * Math.cos(r), cy + maxR * Math.sin(r)); ctx.stroke();
 
             // Red Now
-            const now = new Date();
-            const utcH = now.getUTCHours() + now.getUTCMinutes()/60;
-            const nowHA = (utcH - 12) * 15 + currentLon + eotDeg;
-            const nowAz = getSolarAzimuth(nowHA, currentLat, dec);
-            ctx.strokeStyle = '#e63939';
-            ctx.lineWidth = 6;
-            const nr = toRadians(nowAz + 90);
-            ctx.beginPath();
-            ctx.moveTo(cx, cy);
-            ctx.lineTo(cx + maxR * Math.cos(nr), cy + maxR * Math.sin(nr));
-            ctx.stroke();
+            if (!forprint){
+                const now = new Date();
+                const utcH = now.getUTCHours() + now.getUTCMinutes()/60;
+                const nowHA = (utcH - 12) * 15 + currentLon + eotDeg;
+                const nowAz = getSolarAzimuth(nowHA, currentLat, dec);
+                ctx.strokeStyle = '#e63939';
+                ctx.lineWidth = 6;
+                const nr = toRadians(nowAz + 90);
+                ctx.beginPath();
+                ctx.moveTo(cx, cy);
+                ctx.lineTo(cx + maxR * Math.cos(nr), cy + maxR * Math.sin(nr));
+                ctx.stroke();
+            }
+            
 
             // Gnomon
             ctx.fillStyle = '#cc0000';
