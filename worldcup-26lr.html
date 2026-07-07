@@ -230,7 +230,7 @@ const matches = [
   {
     date: "2026-07-09",
     utcTime: "20:00",
-    match: "1 v 2",
+    match: "France v Morocco",
     city: "Boston",
     lat: 42.091,
     lon: -71.264
@@ -238,7 +238,7 @@ const matches = [
   {
     date: "2026-07-10",
     utcTime: "19:00",
-    match: "5 v 6",
+    match: "Spain v Belgium",
     city: "Los Angeles",
     lat: 33.953,
     lon: -118.339
@@ -246,7 +246,7 @@ const matches = [
   {
     date: "2026-07-11",
     utcTime: "21:00",
-    match: "3 v 4",
+    match: "Norway v England",
     city: "Miami",
     lat: 25.958,
     lon: -80.239
@@ -254,7 +254,7 @@ const matches = [
   {
     date: "2026-07-12",
     utcTime: "01:00",
-    match: "7 v 8",
+    match: "Argentina v Switzerland",
     city: "Kansas City",
     lat: 39.048,
     lon: -94.484
@@ -369,6 +369,7 @@ matches.forEach((m) => {
   
 });
 
+/* workshop space
 const dt = new Date();
 const year = dt.getUTCFullYear();
 const month = dt.getUTCMonth();
@@ -380,6 +381,7 @@ for (var h=0;h<24;h++){
     document.getElementById('debug').innerHTML += '"'+d.to26lr().slice(6,9) + '",';
   }
 }
+*/
 
 if (rowToScrollTo) {
     rowToScrollTo.scrollIntoView({behavior: "smooth",block: "center"});
