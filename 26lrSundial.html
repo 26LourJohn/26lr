@@ -103,11 +103,11 @@
             function drawRay(solarAzDeg, label, ring) {
                 const canvasRad = toRadians(solarAzDeg + 90);
 
-                const startR = ring === 'real' ? 170 : ring === 'std' ? 240 : 295;
-                const labelR = ring === 'real' ? 170 : ring === 'std' ? 230 : 295;
+                const startR = ring === 'real' ? 170 : ring === 'std' ? 250 : 320;
+                const labelR = ring === 'real' ? 170 : ring === 'std' ? 250 : 320;
 
                 ctx.strokeStyle = ring === 'real' ? '#555' : ring === 'std' ? '#222' : '#000';
-                ctx.lineWidth = ring === '26lr' ? 2.0 : 3.0;
+                ctx.lineWidth = ring === '26lr' ? 2.0 : 2.0;
                 ctx.beginPath();
                 ctx.moveTo(cx + startR * Math.cos(canvasRad), cy + startR * Math.sin(canvasRad));
                 ctx.lineTo(cx + maxR * Math.cos(canvasRad), cy + maxR * Math.sin(canvasRad));
@@ -132,7 +132,8 @@
             // Real Solar
             for (let h = 0; h < 24; h++) {
                 const ha = (h - 12) * 15;
-                const az = h?getSolarAzimuth(ha, currentLat, dec):180;
+                const az = h?getSolarAzimuth(ha, currentLat, dec):0;
+                
                 drawRay(az, (h % 12 || 12).toString(), 'real');
             }
 
